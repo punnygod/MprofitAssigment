@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
 import * as Progress from 'react-native-progress';
@@ -15,7 +16,7 @@ const threedot = require('../assets/threedot.png');
 
 const screenWidth = Dimensions.get('window').width;
 
-const Spending = () => {
+const Spending = ({navigation}) => {
   const [data, setData] = useState([
     {
       Date: '2022-01-01',
@@ -76,61 +77,31 @@ const Spending = () => {
   // Update state variables based on user input or API calls
   useEffect(() => {
     fetch('https://dashboard-mobile.free.beeceptor.com/chart-data')
-      .then(response => {
-        console.log('response', response._bodyInit._data);
-        let data = [
-          {
-            Date: '2022-01-01',
-            Spending: 5000,
-          },
-          {
-            Date: '2022-01-15',
-            Spending: 8000,
-          },
-          {
-            Date: '2022-02-01',
-            Spending: 7000,
-          },
-          {
-            Date: '2022-02-15',
-            Spending: 15000,
-          },
-          {
-            Date: '2022-03-01',
-            Spending: 14000,
-          },
-          {
-            Date: '2022-03-15',
-            Spending: 20000,
-          },
-          {
-            Date: '2022-04-01',
-            Spending: 24000,
-          },
-        ];
-        // setData({...data});
+      .then(response => response.json())
+      .then(responseJson => {
+        setData(responseJson);
       })
       .catch(e => {
         console.log('e', e);
       });
   }, []);
-  console.log(data.map(a=>a.Spending))
-  const vro = {
+  const formatYLabel = data => {
+    return Intl.NumberFormat('en-US', {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(data);
+  };
+  const datset = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
       {
-        data: data.map(a=>a.Spending),
+        data: data.map(a => a.Spending),
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // optional
         strokeWidth: 2, // optional
       },
     ],
   };
-  const formatYLabel=(data)=>{
-    return Intl.NumberFormat('en-US', {
-      notation: "compact",
-      maximumFractionDigits: 1
-    }).format(data);
-  }
+
   const chartConfig = {
     backgroundGradientFrom: '#fff',
     backgroundGradientFromOpacity: 1,
@@ -148,13 +119,16 @@ const Spending = () => {
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Image source={back} style={styles.back} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={back} style={styles.back} />
+          </TouchableOpacity>
           <Text style={styles.headerText}>My Spending</Text>
           <Image source={threedot} style={styles.back} />
         </View>
+        <ScrollView horizontal={true}>
         <LineChart
-          data={vro}
-          width={screenWidth *1.5}
+          data={datset}
+          width={screenWidth * 1.5}
           height={256}
           chartConfig={chartConfig}
           bezier
@@ -163,6 +137,7 @@ const Spending = () => {
           formatYLabel={formatYLabel}
           fromZero={true}
         />
+        </ScrollView>
         <View>
           <View style={styles.budgetCard}>
             <View style={styles.cardOne}>
@@ -191,7 +166,7 @@ const Spending = () => {
                       ]}>
                       <Image source={card.image} style={styles.cardImg} />
                     </View>
-                    <View style={{width:'75%'}}>
+                    <View style={{width: '75%'}}>
                       <View style={styles.topText}>
                         <Text style={styles.titleText}>{card.title}</Text>
                         <Text style={[styles.titleText, {textAlign: 'right'}]}>
@@ -280,12 +255,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
     lineHeight: 20,
+    width:'auto'
   },
   header: {
     flexDirection: 'row',
     marginHorizontal: 10,
-    marginVertical: '5%',
+    marginVertical: '8%',
     alignItems: 'center',
+    width:screenWidth*0.9,
     justifyContent: 'space-between',
   },
   textCont: {

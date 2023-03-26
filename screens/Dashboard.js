@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image,TouchableOpacity} from 'react-native';
 
 const visa = require('../assets/visa.png');
 const branch = require('../assets/branch.png');
@@ -8,33 +8,30 @@ const money = require('../assets/money.png');
 const wallet = require('../assets/wallet.png');
 const bank = require('../assets/bank.png');
 
-const Dashboard = () => {
+const Dashboard = ({ navigation }) => {
   const [data, setData] = useState({
     AvailableBalance: 5400,
     Budget: 2453,
     Income: 1700,
     Expense: 1500,
-    currency:'$'
   });
+  const currency='$'
 
   // Update state variables based on user input or API calls
   useEffect(() => {
-    fetch('https://dashboard-mobile.free.beeceptor.com/stats')
-      .then(response => {
-        console.log('response', response._bodyInit._data);
-        let data = {
-          AvailableBalance: 5400,
-          Budget: 2453,
-          Income: 1700,
-          Expense: 1500,
-          currency:'$'
-        };
-        setData({...data});
+    fetch('https://dashboard-mobile.free.beeceptor.com/stats', {
+      method: 'GET',
+      headers: {'Content-type': 'application/json'},
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        setData(responseJson)
       })
       .catch(e => {
-        console.log('e', e);
+        console.log('e api', e);
       });
   }, []);
+  console.log('inside dashboard')
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -46,10 +43,14 @@ const Dashboard = () => {
           <Text style={styles.title}>Available Balance</Text>
           <Image source={visa} style={styles.visa} />
         </View>
-        <Text style={styles.amount}>{data?.currency} {data?.AvailableBalance}</Text>
+        <Text style={styles.amount}>
+          {currency} {data?.AvailableBalance}
+        </Text>
         <Image source={branch} style={styles.branch} />
         <View style={styles.branchContainer}>
+          <TouchableOpacity onPress={()=>navigation.navigate('spending')}>
           <Text style={styles.details}>See details</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={[styles.card, styles.budgetCard]}>
@@ -58,7 +59,9 @@ const Dashboard = () => {
           <Text style={styles.budgetDetails}>Cash Available</Text>
         </View>
         <View>
-          <Text style={styles.budgetAmount}>{data?.currency} {data?.Budget}</Text>
+          <Text style={styles.budgetAmount}>
+            {currency} {data?.Budget}
+          </Text>
         </View>
       </View>
       <View style={[styles.card, styles.savingGoalCard]}>
@@ -80,7 +83,9 @@ const Dashboard = () => {
               <Image source={bank} style={styles.imageCirc} />
             </View>
             <View>
-              <Text style={styles.incomeText}>{data?.currency} {data?.Income}</Text>
+              <Text style={styles.incomeText}>
+                {currency} {data?.Income}
+              </Text>
               <Text style={styles.headDetails}>Income</Text>
             </View>
           </View>
@@ -94,7 +99,9 @@ const Dashboard = () => {
               <Image source={wallet} style={styles.imageCirc} />
             </View>
             <View>
-              <Text style={styles.incomeText}>{data?.currency} {data?.Expense}</Text>
+              <Text style={styles.incomeText}>
+                {currency} {data?.Expense}
+              </Text>
               <Text style={styles.headDetails}>Expense</Text>
             </View>
           </View>
@@ -106,6 +113,7 @@ const Dashboard = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
     marginVertical: 20,
   },
