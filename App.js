@@ -30,13 +30,13 @@ const Stack = createNativeStackNavigator();
 const add = require('./assets/add.png');
 
 const Profile = () => {
-  return <Text>Profile screen</Text>;
+  return <Text style={styles.text}>Profile screen</Text>;
 };
 const Wallet = () => {
-  return <Text>Wallet screen</Text>;
+  return <Text style={styles.text}>Wallet screen</Text>;
 };
 const Calendar = () => {
-  return <Text>Calendar screen</Text>;
+  return <Text style={styles.text}>Calendar screen</Text>;
 };
 
 function HomeTabs() {
@@ -62,7 +62,7 @@ function HomeTabs() {
       <CurvedBottomBar.Screen
         name="dashboard"
         position="LEFT"
-        component={() => <Dashboard />}
+        component={Dashboard}
       />
       <CurvedBottomBar.Screen
         name="calendar"
@@ -84,8 +84,6 @@ function HomeTabs() {
 }
 
 const _renderIcon = (routeName, selectedTab) => {
-  let icon = '';
-
   switch (routeName) {
     case 'dashboard':
       return (
@@ -112,11 +110,13 @@ const _renderIcon = (routeName, selectedTab) => {
         />
       );
     case 'calendar':
-      <Feather
-        name={'calendar'}
-        size={25}
-        color={routeName === selectedTab ? 'black' : 'gray'}
-      />;
+      return (
+        <Feather
+          name={'calendar'}
+          size={25}
+          color={routeName === selectedTab ? 'black' : 'gray'}
+        />
+      );
   }
 };
 const renderTabBar = ({routeName, selectedTab, navigate}) => {
@@ -172,5 +172,9 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 1,
   },
+  text:{
+    color:'#000',
+    alignSelf:'center',
+  }
 });
 export default App;

@@ -91,13 +91,16 @@ const Spending = ({navigation}) => {
       maximumFractionDigits: 1,
     }).format(data);
   };
+  const getlabels=()=>{
+    return data.map(a => new Date(a.Date)).map(a=>a.toLocaleString('en-US', { month: 'short' }))
+  }
   const datset = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: getlabels(),
     datasets: [
       {
         data: data.map(a => a.Spending),
-        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // optional
-        strokeWidth: 2, // optional
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, 
+        strokeWidth: 2.5, 
       },
     ],
   };
@@ -108,9 +111,9 @@ const Spending = ({navigation}) => {
     backgroundGradientTo: '#fff',
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
+    strokeWidth: 2.5, 
     barPercentage: 0.5,
-    useShadowColorFromDataset: false, // op
+    useShadowColorFromDataset: false, 
     fillShadowGradientTo: '#fff',
     fillShadowGradientFrom: '#fff',
     labelColor: (opacity = 1) => `#818181`,
@@ -166,7 +169,7 @@ const Spending = ({navigation}) => {
                       ]}>
                       <Image source={card.image} style={styles.cardImg} />
                     </View>
-                    <View style={{width: '75%'}}>
+                    <View style={{width: '72%'}}>
                       <View style={styles.topText}>
                         <Text style={styles.titleText}>{card.title}</Text>
                         <Text style={[styles.titleText, {textAlign: 'right'}]}>
